@@ -1,0 +1,43 @@
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="jovial"
+# ZSH_THEME="agnoster"
+
+# Uncomment the following line to use case-sensitive completion.
+CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+ENABLE_CORRECTION="true"
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git git-extras zsh-syntax-highlighting zsh-autosuggestions sudo web-search dirhistory jovial)
+
+# Run the initialization script
+source $ZSH/oh-my-zsh.sh
+source /opt/ros/$ROS_DISTRO/setup.zsh
+source $ROS2_WS/install/setup.zsh
+source /usr/share/colcon_cd/function/colcon_cd.sh
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh
+export _colcon_cd_root=/opt/ros/$ROS_DISTRO/
+
+# argcomplete for ros2
+eval "$(register-python-argcomplete3 ros2)"
