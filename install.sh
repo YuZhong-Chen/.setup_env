@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Install tmux
-sudo apt install -y tmux
-cp ./tmux_config/.tmux.conf ~/
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-export TMUX_PLUGIN_MANAGER_PATH=~/.tmux/plugins/tpm
-~/.tmux/plugins/tpm/bin/install_plugins
-
 # Install zsh
 sudo apt install -y zsh
 git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
@@ -17,3 +10,9 @@ cp ./zshrc/.zshrc ~/
 cp ./zsh_theme/jovial.zsh-theme ~/.oh-my-zsh/custom/themes/jovial.zsh-theme
 cp ./zsh_theme/jovial.plugin.zsh ~/.oh-my-zsh/custom/plugins/jovial/jovial.plugin.zsh
 sudo chsh -s /bin/zsh
+
+# Install tmux
+sudo apt install -y tmux
+cp ./tmux_config/.tmux.conf ~/
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+~/.tmux/plugins/tpm/bin/install_plugins
