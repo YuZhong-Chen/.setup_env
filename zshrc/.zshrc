@@ -33,13 +33,13 @@ plugins=(git git-extras zsh-syntax-highlighting zsh-autosuggestions sudo web-sea
 
 source $ZSH/oh-my-zsh.sh
 
-if [ -n $ZSH_SCRIPT_SETTING ]; then
-    if [ $ZSH_SCRIPT_SETTING = "ros1" ]; then
+if [ -n "$ZSH_SCRIPT_SETTING" ]; then
+    if [ "$ZSH_SCRIPT_SETTING" = "ros1" ]; then
         export ROS_HOSTNAME="127.0.0.1"
         export ROS_MASTER_URI=http://127.0.0.1:11311
         source /opt/ros/$ROS_DISTRO/setup.zsh
         source $CATKIN_WS/devel/setup.zsh
-    elif [ $ZSH_SCRIPT_SETTING = "ros2" ]; then
+    elif [ "$ZSH_SCRIPT_SETTING" = "ros2" ]; then
         source /opt/ros/$ROS_DISTRO/setup.zsh
         source $ROS2_WS/install/setup.zsh
         source /usr/share/colcon_cd/function/colcon_cd.sh
