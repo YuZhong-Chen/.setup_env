@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# zshrc setting
+if [ $# = 1 ]; then
+    if [ $1 = "ros1" ]; then
+        sed -i '1 i # Script setting\nexport ZSH_SCRIPT_SETTING="ros1"\n' ./zshrc/.zshrc
+    elif [ $1 = "ros2" ]; then
+        sed -i '1 i # Script setting\nexport ZSH_SCRIPT_SETTING="ros2"\n' ./zshrc/.zshrc
+    fi
+else 
+    sed -i '1 i # Script setting\nexport ZSH_SCRIPT_SETTING=""\n' ./zshrc/.zshrc
+fi
+
+# Update package list
+sudo apt update
+
 # Install zsh
 sudo apt install -y zsh
 git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh

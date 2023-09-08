@@ -31,13 +31,20 @@ ENABLE_CORRECTION="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git git-extras zsh-syntax-highlighting zsh-autosuggestions sudo web-search dirhistory jovial)
 
-# Run the initialization script
-source $ZSH/oh-my-zsh.sh
-source /opt/ros/$ROS_DISTRO/setup.zsh
-source $ROS2_WS/install/setup.zsh
-source /usr/share/colcon_cd/function/colcon_cd.sh
-source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh
-export _colcon_cd_root=/opt/ros/$ROS_DISTRO/
-
-# argcomplete for ros2
-eval "$(register-python-argcomplete3 ros2)"
+if [ -z $ZSH_SCRIPT_SETTING ]; then
+    # pass
+elif [ $ZSH_SCRIPT_SETTING = "ros1" ]; then
+    export ROS_HOSTNAME="127.0.0.1"
+    export ROS_MASTER_URI=http://127.0.0.1:11311
+    source $ZSH/oh-my-zsh.sh
+    source /opt/ros/$ROS_DISTRO/setup.zsh
+    source $CATKIN_WS/devel/setup.zsh
+elif [ $ZSH_SCRIPT_SETTING = "ros2" ]; then
+    source $ZSH/oh-my-zsh.sh
+    source /opt/ros/$ROS_DISTRO/setup.zsh
+    source $ROS2_WS/install/setup.zsh
+    source /usr/share/colcon_cd/function/colcon_cd.sh
+    source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh
+    export _colcon_cd_root=/opt/ros/$ROS_DISTRO/
+    eval "$(register-python-argcomplete3 ros2)"
+fi
