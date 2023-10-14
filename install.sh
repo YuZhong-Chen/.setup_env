@@ -30,3 +30,7 @@ sudo apt install -y tmux
 cp ./tmux_config/.tmux.conf ~/
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ~/.tmux/plugins/tpm/bin/install_plugins
+
+# Install vim
+sudo apt install -y vim
+cp ./vim_config/.vimrc ~/
