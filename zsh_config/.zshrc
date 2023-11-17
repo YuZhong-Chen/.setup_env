@@ -48,3 +48,6 @@ if [ -n "$ZSH_SCRIPT_SETTING" ]; then
         eval "$(register-python-argcomplete3 ros2)"
     fi
 fi
+
+# Set locale
+export LC_ALL=C.UTF-8
