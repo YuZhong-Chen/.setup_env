@@ -51,3 +51,9 @@ fi
 
 # Set locale
 export LC_ALL=C.UTF-8
+
+# Opening tmux at default
+if [[ -z $TMUX ]]; then
+    tmux
+    # exec tmux
+fi
