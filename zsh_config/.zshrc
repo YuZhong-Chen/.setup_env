@@ -57,3 +57,13 @@ if [[ -z $TMUX ]]; then
     tmux
     # exec tmux
 fi
+
+# Open folder GUI in terminal
+function open-folder() {
+    if [ -d "$1" ]; then
+        xdg-open "$1"
+    else
+        # echo "Folder $1 does not exist"
+        xdg-open .
+    fi
+}
