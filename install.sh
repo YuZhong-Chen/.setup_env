@@ -1,16 +1,5 @@
 #!/bin/bash
 
-# zshrc setting
-if [ $# = 1 ]; then
-    if [ $1 = "ros1" ]; then
-        sed -i '1 i # Script setting\nexport ZSH_SCRIPT_SETTING="ros1"\n' ./zsh_config/.zshrc
-    elif [ $1 = "ros2" ]; then
-        sed -i '1 i # Script setting\nexport ZSH_SCRIPT_SETTING="ros2"\n' ./zsh_config/.zshrc
-    fi
-else 
-    sed -i '1 i # Script setting\nexport ZSH_SCRIPT_SETTING=""\n' ./zsh_config/.zshrc
-fi
-
 # Update package list
 sudo apt update
 
