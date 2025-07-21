@@ -2,7 +2,7 @@
 # Reference: https://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html
 
 # Example of the prompt:
-# ╭─[machine-name] as user in ~/ on branch (main)*
+# ╭─[machine-name] as user in ~/ on branch (main)* (docker)
 # └──➤ 
 
 # If current directory is a git repo, display the current branch and whether it is dirty.
@@ -11,10 +11,17 @@ function prompt_git() {
         local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
         local dirty=$(git status --porcelain 2>/dev/null | tail -n 1)
         if [ -n "$dirty" ]; then
-            echo -n "on branch (${branch})*"
+            echo -n " on branch (${branch})*"
         else
-            echo -n "on branch (${branch})"
+            echo -n " on branch (${branch})"
         fi
+    fi
+}
+
+# Check whether inside the docker container
+function prompt_docker() {
+    if [ -f /.dockerenv ]; then
+        echo -n " (docker)"
     fi
 }
 
@@ -53,8 +60,11 @@ PS1+=' in '
 PS1+="${YELLOW}"
 PS1+='\w'                    # Current working directory
 PS1+="${BRIGHT_BLACK}"
-PS1+=' $(prompt_git) '       # Add git branch info if available
+PS1+='$(prompt_git)'       # Add git branch info if available
+PS1+="${BRIGHT_BLUE}"
+PS1+='$(prompt_docker)'     # Add docker info if available
 PS1+='\n'                    # New line
+PS1+="${BRIGHT_BLACK}"
 PS1+="╰──➤"
 PS1+="${RESET}"              # Reset color
 PS1+=' '                     # Trailing space
