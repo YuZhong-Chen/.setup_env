@@ -1,27 +1,24 @@
 # setup_env
 
-Setup zsh & tmux.
+Setup zsh & tmux & vim.
+
+> Note: In `.zshrc`, ROS-related dependencies are sourced if the `ROS_DISTRO` environment variable is set.
 
 ## Install
 
-Please run ```./install.sh``` in the repo.
+Please run `./install.sh` in the repo.
 
-### For normal install
+### Command line
 
-```
+```bash
 git clone https://github.com/YuZhong-Chen/.setup_env.git ~/.setup_env
-cd ~/.setup_env && ./install.sh
+~/.setup_env/install.sh
 ```
 
-### For ros1 install
+### Dockerfile
 
-```
-git clone https://github.com/YuZhong-Chen/.setup_env.git ~/.setup_env
-cd ~/.setup_env && ./install.sh ros1
-```
-### For ros2 install
-
-```
-git clone https://github.com/YuZhong-Chen/.setup_env.git ~/.setup_env
-cd ~/.setup_env && ./install.sh ros2
+```Dockerfile
+# Install custom environment
+RUN git clone https://github.com/YuZhong-Chen/.setup_env.git ~/.setup_env \
+    && ~/.setup_env/install.sh
 ```
