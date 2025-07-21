@@ -18,6 +18,13 @@ cp "${SCRIPT_DIR}/zsh_config/jovial.zsh-theme" ~/.oh-my-zsh/custom/themes/jovial
 cp "${SCRIPT_DIR}/zsh_config/jovial.plugin.zsh" ~/.oh-my-zsh/custom/plugins/jovial/jovial.plugin.zsh
 sudo chsh -s /bin/zsh
 
+# Setup bash prompt
+cp "${SCRIPT_DIR}/bash_config/.bash_prompt_config.sh" ~/.bash_prompt_config.sh
+if [ -f ~/.bashrc ]; then
+    # Append the source command to .bashrc if it exists
+    echo "source ~/.bash_prompt_config.sh" >> ~/.bashrc
+fi
+
 # Install tmux
 sudo apt install -y tmux
 cp "${SCRIPT_DIR}/tmux_config/.tmux.conf" ~/
