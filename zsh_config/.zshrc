@@ -33,13 +33,13 @@ plugins=(git git-extras zsh-syntax-highlighting zsh-autosuggestions sudo web-sea
 
 source $ZSH/oh-my-zsh.sh
 
-if [ -n "ROS_DISTRO" ]; then
-    if [ -n "CATKIN_WS" ]; then
+if [ -n "${ROS_DISTRO:-}" ]; then
+    if [ -n "${CATKIN_WS:-}" ]; then
         export ROS_HOSTNAME="127.0.0.1"
         export ROS_MASTER_URI=http://127.0.0.1:11311
         source /opt/ros/$ROS_DISTRO/setup.zsh
         source $CATKIN_WS/devel/setup.zsh
-    elif [ -n "ROS2_WS" ]; then
+    elif [ -n "${ROS2_WS:-}" ]; then
         source /opt/ros/$ROS_DISTRO/setup.zsh
         source $ROS2_WS/install/setup.zsh
         source /usr/share/colcon_cd/function/colcon_cd.sh
@@ -53,7 +53,7 @@ fi
 export LC_ALL=C.UTF-8
 
 # Opening tmux at default
-if [[ -z $TMUX ]]; then
+if [ -z "${TMUX:-}" ]; then
     tmux
     # exec tmux
 fi
