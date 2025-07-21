@@ -2,11 +2,13 @@
 
 Setup zsh & tmux & vim.
 
-> Note: In `.zshrc`, ROS-related dependencies are sourced if the `ROS_DISTRO` environment variable is set.
+> Note: 
+> 
+> - In `.zshrc`, ROS-related dependencies are sourced if the `ROS_DISTRO` environment variable is set.
+> - We use `bash` as the default shell, if you want to use `zsh`, please add the configuration when executing the install script:
+>     - `~/.setup_env/install.sh --shell zsh`
 
 ## Install
-
-Please run `./install.sh` in the repo.
 
 ### Command line
 
