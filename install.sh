@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)"
 
 # Read the variable
 CURRENT_SHELL="bash"
+NO_SUDO=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --shell)
@@ -18,10 +19,14 @@ while [[ $# -gt 0 ]]; do
                 CURRENT_SHELL="$1"
             fi
             ;;
+        --no-sudo)
+            NO_SUDO=1
+            ;;
         --help|-h)
             echo "Usage: $0 [--shell <shell_type>]"
             echo "Options:"
             echo "  --shell <shell_type>   Specify the shell type (default: bash)"
+            echo "  --no-sudo              Do not use sudo for package installations"
             echo "  --help, -h             Show this help message"
             exit 0
             ;;
@@ -33,13 +38,19 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# Update package list
-sudo apt update
+# Update package list, and install necessary packages
+if [[ "$NO_SUDO" -eq 0 ]]; then
+    sudo apt update
+    sudo apt install -y git
+fi
 
 # Install zsh
 if [[ "$CURRENT_SHELL" == "zsh" ]]; then
-    echo "Installing zsh..."
-    sudo apt install -y zsh
+    # Install zsh
+    if [[ "$NO_SUDO" -eq 0 ]]; then
+        sudo apt install -y zsh
+    fi
+    # Clone the oh-my-zsh repository and set up plugins
     git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
     git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
@@ -47,19 +58,27 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     cp "${SCRIPT_DIR}/zsh_config/.zshrc" ~/
     cp "${SCRIPT_DIR}/zsh_config/jovial.zsh-theme" ~/.oh-my-zsh/custom/themes/jovial.zsh-theme
     cp "${SCRIPT_DIR}/zsh_config/jovial.plugin.zsh" ~/.oh-my-zsh/custom/plugins/jovial/jovial.plugin.zsh
-    sudo chsh -s /bin/zsh
+    # Set zsh as the default shell
+    if [[ "$NO_SUDO" -eq 0 ]]; then
+        sudo chsh -s /bin/zsh
+    fi
 fi
 
 # Configure bash
 if [[ "$CURRENT_SHELL" == "bash" ]]; then
-    echo "Installing bash..."
-    sudo apt install -y bash-completion
+    # Install bash-completion
+    if [[ "$NO_SUDO" -eq 0 ]]; then
+        sudo apt install -y bash-completion
+    fi
+    # Copy bash configuration files and set up prompt
     cp "${SCRIPT_DIR}/bash_config/.bash_prompt_config.sh" ~/.bash_prompt_config.sh
     echo "source ~/.bash_prompt_config.sh" >> ~/.bashrc
 fi
 
 # Install tmux
-sudo apt install -y tmux
+if [[ "$NO_SUDO" -eq 0 ]]; then
+    sudo apt install -y tmux
+fi
 cp "${SCRIPT_DIR}/tmux_config/.tmux.conf" ~/
 if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     # Replace the default shell in .tmux.conf if zsh is used
@@ -69,5 +88,7 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ~/.tmux/plugins/tpm/bin/install_plugins
 
 # Install vim
-sudo apt install -y vim
+if [[ "$NO_SUDO" -eq 0 ]]; then
+    sudo apt install -y vim
+fi
 cp "${SCRIPT_DIR}/vim_config/.vimrc" ~/
