@@ -17,13 +17,17 @@ while [[ $# -gt 0 ]]; do
                     exit 1
                 fi
                 CURRENT_SHELL="$1"
+            else
+                echo "No shell type specified."
+                echo "Usage: $0 --shell <shell_type>"
+                exit 1
             fi
             ;;
         --no-sudo)
             NO_SUDO=1
             ;;
         --help|-h)
-            echo "Usage: $0 [--shell <shell_type>]"
+            echo "Usage: $0 [--shell <shell_type>] [--no-sudo] [--help|-h]"
             echo "Options:"
             echo "  --shell <shell_type>   Specify the shell type (default: bash)"
             echo "  --no-sudo              Do not use sudo for package installations"
