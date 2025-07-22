@@ -25,6 +25,11 @@ Script parameters:
 - `--shell <shell_type>`: 
     - Specify the shell type to install. Options are `bash` or `zsh`.
     - Default is `bash`.
+- `--no-sudo`:
+    - If set, the script will not use `sudo` for package installations. Make sure you have already installed the required packages manually.
+    - It is useful if you are running the script in some environments where `sudo` is not available, such as laboratory servers.
+- `--help` | `-h`:
+    - Display help information for the script.
 
 > Append the parameters you want to use at the end of the command.
 
