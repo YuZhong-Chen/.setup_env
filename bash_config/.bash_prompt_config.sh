@@ -6,8 +6,8 @@
 # └──➤ 
 
 # Set the locale to UTF-8, otherwise the prompt may not display correctly.
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
 
 # If current directory is a git repo, display the current branch and whether it is dirty.
 function prompt_git() {
