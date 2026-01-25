@@ -5,9 +5,29 @@
 # ╭─[machine-name] as user in ~/ on branch (main)* (docker)
 # └──➤ 
 
+# Only configure prompt for interactive shells.
+case $- in
+    *i*) ;;
+    *) return ;;
+esac
+
 # Set the locale to UTF-8, otherwise the prompt may not display correctly.
 export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
+
+# Preserve Cursor/VS Code shell integration markers if present.
+PROMPT_PREFIX=""
+PROMPT_SUFFIX=""
+if [[ -n "${VSCODE_PROMPT_PREFIX:-}" || -n "${VSCODE_PROMPT_SUFFIX:-}" ]]; then
+    PROMPT_PREFIX="${VSCODE_PROMPT_PREFIX:-}"
+    PROMPT_SUFFIX="${VSCODE_PROMPT_SUFFIX:-}"
+elif [[ -n "${CURSOR_PROMPT_PREFIX:-}" || -n "${CURSOR_PROMPT_SUFFIX:-}" ]]; then
+    PROMPT_PREFIX="${CURSOR_PROMPT_PREFIX:-}"
+    PROMPT_SUFFIX="${CURSOR_PROMPT_SUFFIX:-}"
+elif [[ -n "${VSCODE_SHELL_INTEGRATION:-}" || -n "${CURSOR_SHELL_INTEGRATION:-}" ]]; then
+    PROMPT_PREFIX='\[\e]633;A\a\]'
+    PROMPT_SUFFIX='\[\e]633;B\a\]'
+fi
 
 # If current directory is a git repo, display the current branch and whether it is dirty.
 function prompt_git() {
@@ -50,6 +70,7 @@ BRIGHT_WHITE="\[\e[97m\]"    # bright white
 
 # Setup the prompt
 PS1=''                       # Initialize PS1
+PS1+="${PROMPT_PREFIX}"
 PS1+='\n'                    # New line
 PS1+="${BRIGHT_BLACK}"
 PS1+='╭─['
@@ -72,3 +93,4 @@ PS1+="${BRIGHT_BLACK}"
 PS1+="╰──➤"
 PS1+="${RESET}"              # Reset color
 PS1+=' '                     # Trailing space
+PS1+="${PROMPT_SUFFIX}"

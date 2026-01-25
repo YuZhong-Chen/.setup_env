@@ -85,3 +85,13 @@ The most commonly used ones are listed below.
 ### Terminal character display issue
 
 Please make sure your terminal supports and correctly displays UTF-8 characters. If the output does not match the example, it is likely due to missing font support for certain symbols. You can resolve this by installing a font that includes these characters or by replacing unsupported symbols with alternatives.
+
+### Cursor/VS Code terminal integration issues
+
+If Cursor/VS Code cannot detect when commands finish (for example, the agent
+cannot run commands in the terminal), it is usually because a custom prompt
+overwrites shell integration markers. This repo's bash prompt preserves the
+integration markers when they are present. If you modify the prompt after
+sourcing `.bash_prompt_config.sh`, keep the prompt prefix/suffix markers
+(`VSCODE_PROMPT_PREFIX`/`VSCODE_PROMPT_SUFFIX` or Cursor equivalents) so the
+terminal can track command boundaries.
