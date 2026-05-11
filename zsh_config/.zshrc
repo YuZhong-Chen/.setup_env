@@ -52,25 +52,26 @@ fi
 # Set locale
 export LC_ALL=C.UTF-8
 
-# Open tmux by default with the lowest available session number (Optimized)
+# Open tmux by default with the lowest available session number (Zsh Optimized)
 if [ -z "${TMUX:-}" ]; then
     # If no tmux server is running, create session 0 directly
     if ! tmux ls >/dev/null 2>&1; then
         tmux new-session -s 0
     else
-        # 1. Get all purely numeric session names and sort them in ascending order (calls tmux only once)
-        # -F '#S' ensures only the session names are outputted
-        existing=$(tmux ls -F '#S' 2>/dev/null | grep '^[0-9]\+$' | sort -n)
-        # 2. Find the lowest available (missing) number
         target=0
-        for s in $existing; do
+        # Read session numbers line by line to prevent Zsh word splitting issues
+        while IFS= read -r s; do
+            # Skip empty lines if any
+            if [ -z "$s" ]; then
+                continue
+            fi
             if [ "$s" -eq "$target" ]; then
                 target=$((target + 1))
             elif [ "$s" -gt "$target" ]; then
                 break # Found the gap/missing number!
             fi
-        done
-        # 3. Create and attach to the session with that number
+        done < <(tmux ls -F '#S' 2>/dev/null | grep '^[0-9]\+$' | sort -n)
+        # Create and attach to the session with that number
         tmux new-session -s "$target"
     fi
 fi
