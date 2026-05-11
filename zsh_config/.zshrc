@@ -52,10 +52,20 @@ fi
 # Set locale
 export LC_ALL=C.UTF-8
 
-# Opening tmux at default
+# Open tmux by default with the lowest available session number
 if [ -z "${TMUX:-}" ]; then
-    tmux
-    # exec tmux
+    # If no tmux server is running, create session 0 directly
+    if ! tmux ls >/dev/null 2>&1; then
+        tmux new-session -s 0
+    else
+        # If a server exists, find the lowest available number starting from 0
+        for i in {0..100}; do
+            if ! tmux has-session -t "=$i" 2>/dev/null; then
+                tmux new-session -s "$i"
+                break # Break the loop after the session is created
+            fi
+        done
+    fi
 fi
 
 # Open folder GUI in terminal
