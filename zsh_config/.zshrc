@@ -52,28 +52,53 @@ fi
 # Set locale
 export LC_ALL=C.UTF-8
 
-# Open tmux by default with the lowest available session number (Zsh Optimized)
-if [ -z "${TMUX:-}" ]; then
-    # If no tmux server is running, create session 0 directly
-    if ! tmux ls >/dev/null 2>&1; then
-        tmux new-session -s 0
-    else
-        target=0
-        # Read session numbers line by line to prevent Zsh word splitting issues
-        while IFS= read -r s; do
-            # Skip empty lines if any
-            if [ -z "$s" ]; then
-                continue
-            fi
-            if [ "$s" -eq "$target" ]; then
-                target=$((target + 1))
-            elif [ "$s" -gt "$target" ]; then
-                break # Found the gap/missing number!
-            fi
-        done < <(tmux ls -F '#S' 2>/dev/null | grep '^[0-9]\+$' | sort -n)
-        # Create and attach to the session with that number
-        tmux new-session -s "$target"
+# Open tmux with the lowest available session number.
+# Reattaches to a detached numeric session first, then falls back to creating a
+# new one at the lowest gap. `command tmux` is used inside to avoid recursing
+# through the tmux() wrapper defined below.
+_tmux_smart_open() {
+    if ! command tmux ls >/dev/null 2>&1; then
+        command tmux new-session -s 0
+        return
     fi
+
+    # Closing a terminal only DETACHES tmux — the session lives on. Reattach
+    # to the lowest-numbered detached session so numbers don't climb forever.
+    local detached
+    detached=$(command tmux ls -F '#{session_attached} #S' 2>/dev/null \
+        | awk '$1 == 0 && $2 ~ /^[0-9]+$/ { print $2 }' \
+        | sort -n | head -n 1)
+    if [ -n "$detached" ]; then
+        command tmux attach-session -t "$detached"
+        return
+    fi
+
+    local target=0 s
+    while IFS= read -r s; do
+        if [ -z "$s" ]; then
+            continue
+        fi
+        if [ "$s" -eq "$target" ]; then
+            target=$((target + 1))
+        elif [ "$s" -gt "$target" ]; then
+            break # Found the gap/missing number!
+        fi
+    done < <(command tmux ls -F '#S' 2>/dev/null | grep '^[0-9]\+$' | sort -n)
+    command tmux new-session -s "$target"
+}
+
+# Make bare `tmux` use the smart logic, while `tmux <args>` is untouched.
+tmux() {
+    if [ $# -eq 0 ] && [ -z "${TMUX:-}" ]; then
+        _tmux_smart_open
+    else
+        command tmux "$@"
+    fi
+}
+
+# Open tmux by default on new terminals.
+if [ -z "${TMUX:-}" ]; then
+    _tmux_smart_open
 fi
 
 # Open folder GUI in terminal
