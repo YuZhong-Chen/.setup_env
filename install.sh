@@ -62,9 +62,12 @@ if [[ "$CURRENT_SHELL" == "zsh" ]]; then
     cp "${SCRIPT_DIR}/zsh_config/.zshrc" ~/
     cp "${SCRIPT_DIR}/zsh_config/jovial.zsh-theme" ~/.oh-my-zsh/custom/themes/jovial.zsh-theme
     cp "${SCRIPT_DIR}/zsh_config/jovial.plugin.zsh" ~/.oh-my-zsh/custom/plugins/jovial/jovial.plugin.zsh
-    # Set zsh as the default shell
+    # Set zsh as the default shell.
+    # chsh acts on the invoking user, which under sudo is root, so the target
+    # user has to be named explicitly. $USER is unset in a Docker RUN, so
+    # "id -un" is used instead.
     if [[ "$NO_SUDO" -eq 0 ]]; then
-        sudo chsh -s /bin/zsh
+        sudo chsh -s /bin/zsh "$(id -un)"
     fi
 fi
 
