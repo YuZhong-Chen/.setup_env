@@ -143,16 +143,104 @@ Currently installed:
 
 To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, and add any keybinding it needs to `yazi_config/keymap.toml`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately.
 
-### Icons and image preview
+### Installing a Nerd Font
+
+`yazi` labels files with [Nerd Font](https://www.nerdfonts.com) icons, and the prompt uses a few too. The terminal on the machine you are sitting at is what renders them, so the font has to be installed there.
+
+> These commands are for the machine you are **sitting at**, not for a server or a container. `install.sh` deliberately does not install fonts, because a headless machine has nothing to render them.
+
+Pick one of the two routes.
+
+**Symbols only, about 2.3 MB.** Adds the icon glyphs to whatever monospace font you already use, and installs the fontconfig rule that upstream ships with it:
+
+```bash
+mkdir -p ~/.local/share/fonts ~/.config/fontconfig/conf.d
+curl -fsSLo /tmp/symbols.tar.xz \
+    https://github.com/ryanoasis/nerd-fonts/releases/latest/download/NerdFontsSymbolsOnly.tar.xz
+tar -xf /tmp/symbols.tar.xz -C ~/.local/share/fonts \
+    SymbolsNerdFont-Regular.ttf SymbolsNerdFontMono-Regular.ttf
+tar -xf /tmp/symbols.tar.xz -C ~/.config/fontconfig/conf.d 10-nerd-font-symbols.conf
+fc-cache -f
+```
+
+**A full patched font.** Replaces your terminal font with one that already contains the icons. `JetBrainsMono` is used here; any font from [nerdfonts.com](https://www.nerdfonts.com) works the same way:
+
+```bash
+mkdir -p ~/.local/share/fonts/JetBrainsMono
+curl -fsSLo /tmp/font.zip \
+    https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
+unzip -joq /tmp/font.zip "JetBrainsMonoNerdFontMono-*.ttf" -d ~/.local/share/fonts/JetBrainsMono
+fc-cache -f
+```
+
+Then **set the terminal font explicitly**, to `JetBrainsMono Nerd Font Mono` or whichever font you installed. Leaving it as `monospace` or "system default" sends the icons through font fallback, which is where they go wrong. In `GNOME Terminal` this also means unticking *Use the system fixed width font*, otherwise the font setting is silently ignored.
+
+To check that it worked, each of these should name a Nerd Font:
+
+```bash
+for cp in e5ff e702 f15b f07b; do
+    printf "U+%s -> %s\n" "$cp" "$(fc-match ":charset=${cp}" family)"
+done
+```
 
 > Note:
 >
-> - `yazi` uses [Nerd Font](https://www.nerdfonts.com) icons. Fonts are rendered by the terminal on the machine **you are sitting at**, never by the server. If icons look wrong over SSH, install a Nerd Font on your **local** machine, not on the server. Installing fonts inside a container or on a remote host has no effect.
-> - For sharp image preview, the terminal must support a graphics protocol, such as `kitty`, `WezTerm` or `Ghostty`. `GNOME Terminal` does not support one. On terminals without a graphics protocol, `yazi` falls back to `chafa`, which draws the image as coloured text; it looks blocky, but it works everywhere, including over SSH. If `chafa` is missing, `yazi` reports ``failed to spawn chafa`` and shows nothing.
-> - The `.tmux.conf` here already sets `allow-passthrough on`, which `tmux` needs in order to forward image escape sequences.
+> - If the icons show up as **Chinese characters**, a CJK font is claiming the Private Use Area where Nerd Font icons live, and the check above will name it. On Debian and Ubuntu the usual culprits are `fonts-arphic-uming` and `fonts-arphic-ukai`. Either remove them, or add a rule in `~/.config/fontconfig/conf.d/` that subtracts `U+E000-U+F8FF` from those two families only, which leaves their normal CJK coverage intact.
 
 ## 🔍 Troubleshooting 🔍
 
-### Terminal character display issue
+Each entry starts with what you actually see on screen.
 
-Please make sure your terminal supports and correctly displays UTF-8 characters. If the output does not match the example, it is likely due to missing font support for certain symbols. You can resolve this by installing a font that includes these characters or by replacing unsupported symbols with alternatives.
+### The icons are Chinese characters
+
+Nerd Font icons live in the Unicode Private Use Area, `U+E000`–`U+F8FF`. Some CJK fonts map Chinese glyphs into that same range, so when one of them wins font fallback you get Chinese characters where the icons should be. On Debian and Ubuntu the usual culprits are `fonts-arphic-uming` and `fonts-arphic-ukai`.
+
+Ask fontconfig which font is answering:
+
+```bash
+fc-match ":charset=e702" family
+```
+
+If that names a CJK font instead of a Nerd Font, add a rule under `~/.config/fontconfig/conf.d/` that subtracts `U+E000-U+F8FF` from those two families only, then run `fc-cache -f`. Their normal CJK coverage is untouched, so Chinese text still renders correctly.
+
+### The icons are boxes, question marks or blank gaps
+
+No Nerd Font is installed on the machine you are sitting at, or the terminal is not actually using it.
+
+Fonts are rendered by **your** terminal, never by the server, so installing a font on a remote host or inside a container changes nothing. Install it locally: [Installing a Nerd Font](#installing-a-nerd-font).
+
+If the font is installed and the icons are still wrong, the terminal is most likely still set to `monospace` or "system default", which sends the icons through font fallback. Set the font explicitly. In `GNOME Terminal` you must also untick *Use the system fixed width font*, otherwise the font you chose is silently ignored.
+
+### `yazi` reports "Cannot find 'file'"
+
+The `file` command is missing. `yazi` uses it to work out the type of every file, so without it nothing can be previewed at all.
+
+It is installed automatically when `sudo` is available. Otherwise install the `file` package by hand.
+
+### `yazi` reports "failed to spawn chafa"
+
+`chafa` is missing.
+
+When the terminal has no graphics protocol, `yazi` draws images as coloured text using `chafa`. That covers `GNOME Terminal` and most terminals reached over SSH. It is installed automatically when `sudo` is available; otherwise install the `chafa` package by hand.
+
+### Images never appear, but everything else previews fine
+
+Expected in a terminal without a graphics protocol, unless `chafa` is installed. With `chafa` the image appears as coloured blocks. For sharp images, use a terminal that supports a graphics protocol, such as `kitty`, `WezTerm` or `Ghostty`.
+
+### Images come out as streams of symbols such as `++++`
+
+The terminal supports a graphics protocol, so `yazi` sends the image as an escape sequence, but something between `yazi` and the terminal is failing to consume it, and the raw payload is printed as text instead.
+
+Almost always a multiplexer layer. `tmux` needs `allow-passthrough on`, which the `.tmux.conf` here already sets. Nested multiplexers are the common cause: `yazi` wraps its escape sequences for **one** level of `tmux`, so a `tmux` on the host plus another inside a container is one wrap too few. Run `yazi` under a single `tmux`, or none.
+
+To see what `yazi` decided to do, run:
+
+```bash
+ya env
+```
+
+`Emulator.probe` shows what it detected, and `Adapter` shows which renderer it chose.
+
+### The prompt symbols look wrong
+
+Make sure the terminal supports and correctly displays UTF-8. If the prompt still does not match the example in the introduction, the font is missing those glyphs; install a Nerd Font as above, or replace the symbols in the prompt config with ones your font has.
