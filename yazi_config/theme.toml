@@ -1,0 +1,33 @@
+# Theme for the git plugin.
+# Upstream docs: https://github.com/yazi-rs/plugins/tree/main/git.yazi
+#
+# The signs mirror `git status --short`, so they read the same way as the git
+# CLI does:
+#
+#     A  added      D  deleted     M  modified
+#     U  unmerged   ?  untracked   !  ignored
+#
+# git tells staged from unstaged by which column the M sits in. There is only
+# one column here, so both use "M" and the colour separates them, which is
+# what git itself does: staged green, unstaged yellow.
+
+[git]
+unknown_sign   = ""
+ignored_sign   = "! "
+untracked_sign = "? "
+unstaged_sign  = "M "
+staged_sign    = "M "
+added_sign     = "A "
+deleted_sign   = "D "
+updated_sign   = "U "
+clean_sign     = ""
+
+# Colour is what separates staged from unstaged, so set it explicitly rather
+# than relying on the plugin's defaults.
+ignored   = { fg = "darkgray" }
+untracked = { fg = "magenta" }
+unstaged  = { fg = "yellow" }
+staged    = { fg = "green" }
+added     = { fg = "green" }
+deleted   = { fg = "red" }
+updated   = { fg = "yellow" }

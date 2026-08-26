@@ -133,7 +133,9 @@ Optional preview dependencies (`ffmpeg`, `jq`, `poppler-utils`, `7zip`, `chafa`)
 
 ### Plugins
 
-Plugins are declared in `yazi_config/package.toml` and installed with `ya pkg install`, so every machine ends up on the same pinned revision. Everything in `yazi_config/` is copied into `~/.config/yazi/`: `keymap.toml` for keybindings, `yazi.toml` for fetchers, and `init.lua` for plugins that need setting up in Lua.
+Plugins are declared in `yazi_config/package.toml` and installed with `ya pkg install`, so every machine ends up on the same pinned revision. Everything in `yazi_config/` is copied into `~/.config/yazi/`: `keymap.toml` for keybindings, `yazi.toml` for fetchers, `init.lua` for plugins that need setting up in Lua, and `theme.toml` for how they look.
+
+The git status signs are set to match `git status --short`, so they read the same way as the git CLI: `A` added, `D` deleted, `M` modified, `U` unmerged, `?` untracked, `!` ignored. git separates staged from unstaged by which column the `M` is in; there is only one column here, so both use `M` and the colour separates them, green for staged and yellow for unstaged, as git does.
 
 Currently installed:
 
