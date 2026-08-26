@@ -133,15 +133,16 @@ Optional preview dependencies (`ffmpeg`, `jq`, `poppler-utils`, `7zip`, `chafa`)
 
 ### Plugins
 
-Plugins are declared in `yazi_config/package.toml` and installed with `ya pkg install`, so every machine ends up on the same pinned revision. The matching keybindings live in `yazi_config/keymap.toml`. Both files are copied into `~/.config/yazi/`.
+Plugins are declared in `yazi_config/package.toml` and installed with `ya pkg install`, so every machine ends up on the same pinned revision. Everything in `yazi_config/` is copied into `~/.config/yazi/`: `keymap.toml` for keybindings, `yazi.toml` for fetchers, and `init.lua` for plugins that need setting up in Lua.
 
 Currently installed:
 
 | Plugin | Keybinding | What it does |
 | --- | --- | --- |
 | [chmod](https://github.com/yazi-rs/plugins/tree/main/chmod.yazi) | `c` `m` | Change the mode of the selected files |
+| [git](https://github.com/yazi-rs/plugins/tree/main/git.yazi) | — | Shows git status signs per file, and the current branch in the header |
 
-To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, and add any keybinding it needs to `yazi_config/keymap.toml`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately.
+To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, then add whatever its README asks for to `yazi_config/keymap.toml`, `yazi_config/yazi.toml` or `yazi_config/init.lua`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately.
 
 ### Installing a Nerd Font
 

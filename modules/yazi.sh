@@ -143,9 +143,10 @@ install_yazi_plugins() {
         return 0
     fi
 
+    # Copy every config file, so adding one to yazi_config/ needs no change
+    # here. package.toml declares the plugins, and the rest configure them.
     mkdir -p ~/.config/yazi
-    cp "${REPO_DIR}/yazi_config/package.toml" ~/.config/yazi/
-    cp "${REPO_DIR}/yazi_config/keymap.toml" ~/.config/yazi/
+    cp "${REPO_DIR}/yazi_config/"* ~/.config/yazi/
 
     # "ya pkg install" installs everything package.toml declares, at the
     # pinned revision, and does nothing for plugins that are already present.
