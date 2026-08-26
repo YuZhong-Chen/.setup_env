@@ -1,0 +1,8 @@
+# Plugin keybindings.
+# Upstream docs: https://github.com/yazi-rs/plugins
+
+# chmod: change the mode of the selected files.
+[[mgr.prepend_keymap]]
+on   = [ "c", "m" ]
+run  = "plugin chmod"
+desc = "Chmod on selected files"

@@ -131,6 +131,18 @@ The `musl` builds are statically linked, so they run on any Linux without extra 
 
 Optional preview dependencies (`ffmpeg`, `jq`, `poppler-utils`, `7zip`, `chafa`) are installed only when `sudo` is available. Without them `yazi` still works, but video, PDF, JSON and archive previews are unavailable. Note that Debian and Ubuntu name the 7-Zip binary `7z`, not `7zz` as the upstream `yazi` documentation assumes.
 
+### Plugins
+
+Plugins are declared in `yazi_config/package.toml` and installed with `ya pkg install`, so every machine ends up on the same pinned revision. The matching keybindings live in `yazi_config/keymap.toml`. Both files are copied into `~/.config/yazi/`.
+
+Currently installed:
+
+| Plugin | Keybinding | What it does |
+| --- | --- | --- |
+| [chmod](https://github.com/yazi-rs/plugins/tree/main/chmod.yazi) | `c` `m` | Change the mode of the selected files |
+
+To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, and add any keybinding it needs to `yazi_config/keymap.toml`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately.
+
 ### Icons and image preview
 
 > Note:

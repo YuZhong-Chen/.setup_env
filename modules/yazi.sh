@@ -80,6 +80,10 @@ install_yazi() {
     fi
     log "Installed yazi and ya into ${bindir}"
 
+    # Make the binaries reachable in this shell too, so the plugin step
+    # below can call "ya" even when it went to ~/.local/bin.
+    export PATH="${bindir}:${PATH}"
+
     # Shell completions. Both destinations are searched by default and need
     # no root, so this works the same in either mode.
     if [[ "$CURRENT_SHELL" == "zsh" ]]; then
@@ -122,6 +126,34 @@ install_yazi() {
         log "Without 'chafa', yazi reports \"failed to spawn chafa\" on"
         log "terminals that have no graphics protocol."
         log "Note that 'file' is required, not optional."
+    fi
+
+    install_yazi_plugins
+}
+
+# Installs the plugins declared in yazi_config/package.toml.
+#
+# The config is shipped in this repository rather than generated, so every
+# machine ends up on the same pinned plugin revisions.
+install_yazi_plugins() {
+    local MODULE="yazi"
+
+    if ! have ya; then
+        warn "'ya' was not found, so plugins were not installed."
+        return 0
+    fi
+
+    mkdir -p ~/.config/yazi
+    cp "${REPO_DIR}/yazi_config/package.toml" ~/.config/yazi/
+    cp "${REPO_DIR}/yazi_config/keymap.toml" ~/.config/yazi/
+
+    # "ya pkg install" installs everything package.toml declares, at the
+    # pinned revision, and does nothing for plugins that are already present.
+    log "Installing plugins ..."
+    if ya pkg install; then
+        log "Plugins installed."
+    else
+        warn "Plugin installation failed. yazi itself still works."
     fi
 }
 
