@@ -51,6 +51,37 @@ RUN git clone https://github.com/YuZhong-Chen/.setup_env.git ~/.setup_env \
     && ~/.setup_env/install.sh
 ```
 
+## 🧩 Structure 🧩
+
+Each package is installed by its own module under `modules/`, and `install.sh` just calls them in order. Shared helpers, argument parsing and the `--no-sudo` handling live in `modules/common.sh`, so they exist in exactly one place.
+
+```
+.setup_env/
+├── install.sh          # entry point, calls the modules in order
+├── modules/
+│   ├── common.sh       # shared helpers, argument parsing
+│   ├── zsh.sh          # install_zsh
+│   ├── bash.sh         # install_bash
+│   ├── tmux.sh         # install_tmux
+│   ├── vim.sh          # install_vim
+│   └── yazi.sh         # install_yazi
+├── zsh_config/
+├── bash_config/
+├── tmux_config/
+└── vim_config/
+```
+
+### Running a single module
+
+Every module also runs on its own, with the same flags. This is the easy way to add or reinstall one package on a machine that was set up with an older version of this repository, without re-running the whole script:
+
+```bash
+cd ~/.setup_env && git pull
+./modules/yazi.sh --shell zsh
+```
+
+Modules are safe to re-run: existing clones are skipped rather than failing, and `~/.bashrc` is only appended to once.
+
 ## 📘 Configuration of `tmux` 📘
 
 ### Key Bindings
