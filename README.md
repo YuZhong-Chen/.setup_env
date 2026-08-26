@@ -140,9 +140,12 @@ Currently installed:
 | Plugin | Keybinding | What it does |
 | --- | --- | --- |
 | [chmod](https://github.com/yazi-rs/plugins/tree/main/chmod.yazi) | `c` `m` | Change the mode of the selected files |
-| [git](https://github.com/yazi-rs/plugins/tree/main/git.yazi) | — | Shows git status signs per file, and the current branch in the header |
+| [git](https://github.com/yazi-rs/plugins/tree/main/git.yazi) | — | Shows git status signs next to each file |
+| [vcs-files](https://github.com/yazi-rs/plugins/tree/main/vcs-files.yazi) | `g` `c` | Lists the files changed in git |
 
-To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, then add whatever its README asks for to `yazi_config/keymap.toml`, `yazi_config/yazi.toml` or `yazi_config/init.lua`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately.
+To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, then add whatever its README asks for to `yazi_config/keymap.toml`, `yazi_config/yazi.toml` or `yazi_config/init.lua`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately. Each plugin pins independently, so the revisions above do not all have to match.
+
+> Note: `g` `c` replaces yazi's default *Go to ~/.config*, because keybindings here are prepended. Check `yazi`'s own keymap before choosing a binding, or you will shadow something silently.
 
 ### Installing a Nerd Font
 

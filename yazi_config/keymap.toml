@@ -1,8 +1,19 @@
 # Plugin keybindings.
 # Upstream docs: https://github.com/yazi-rs/plugins
+#
+# These are prepended, so they take precedence over yazi's own defaults.
 
 # chmod: change the mode of the selected files.
+# "c m" is not bound by default, so nothing is shadowed.
 [[mgr.prepend_keymap]]
 on   = [ "c", "m" ]
 run  = "plugin chmod"
 desc = "Chmod on selected files"
+
+# vcs-files: list the files changed in git.
+# Note that "g c" is "Go to ~/.config" in yazi's defaults, and this replaces
+# it. Rebind that elsewhere here if you still want it.
+[[mgr.prepend_keymap]]
+on   = [ "g", "c" ]
+run  = "plugin vcs-files"
+desc = "Show Git file changes"
