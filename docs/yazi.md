@@ -2,6 +2,79 @@
 
 [yazi](https://yazi-rs.github.io) is a terminal file manager. It is installed by default; pass `--no-yazi` to skip it.
 
+## Key Bindings
+
+The ones worth knowing, listed by what you are trying to do. Plugin and default keys are mixed together, since in practice you do not care which is which.
+
+Press `~` or `F1` inside yazi for the complete list, including anything not mentioned here.
+
+### Moving around
+
+- `j` / `k`, or `↓` / `↑`: Next / previous file.
+- `l` / `h`, or `→` / `←`: Enter the directory / go back to the parent.
+- `L` / `H`: Forward / back through directories you have already visited.
+- `g` + `g` / `G`: Jump to the top / bottom of the list.
+- `ctrl` + `d` / `ctrl` + `u`: Half a page down / up.
+- `g` + `h`: Go to your home directory.
+- `g` + `r`: Go to the root of the current git repository.
+- `g` + `<Space>`: Type a path and jump straight to it.
+- `z` / `Z`: Jump to a file with `fzf` / a directory with `zoxide`. (Both need that tool installed.)
+
+### Selecting files
+
+Most operations act on the selection, or on the hovered file if nothing is selected.
+
+- `<Space>`: Select the current file and move down one.
+- `v` / `V`: Visual mode, selecting / unselecting as you move.
+- `ctrl` + `a`: Select everything in the directory.
+- `ctrl` + `r`: Invert the selection.
+- `<Esc>`: Clear the selection, or leave visual mode.
+
+### Working with files
+
+- `<Enter>` or `o`: Open. `O` lets you pick the program.
+- `a`: Create a file. End the name with `/` to make a directory instead.
+- `r`: Rename. The cursor lands before the extension.
+- `d` / `D`: Move to trash / delete permanently.
+- `y` / `x`: Copy / cut.
+- `p` / `P`: Paste / paste, overwriting anything already there.
+- `-` / `_`: Symlink what you yanked, by absolute / relative path.
+- `c` + `m`: Change the permissions of the selected files.
+- `;` / `:`: Run a shell command. `:` waits for it to finish before returning.
+
+### Finding things
+
+- `/` / `?`: Find by name in this directory, forwards / backwards. `n` and `N` step through matches.
+- `f`: Filter the listing down as you type.
+- `s` / `S`: Search by filename with `fd` / by file contents with `ripgrep`.
+- `g` + `c`: List the files changed in git.
+- `.`: Show or hide dotfiles.
+
+### Looking at things
+
+- `<Tab>`: Spot the hovered file, showing its metadata.
+- `J` / `K`: Scroll the preview pane without leaving the list.
+- `m` + `s` / `p` / `m` / `b` / `o` / `n`: Show size / permissions / modified time / created time / owner / nothing beside each file.
+
+### Sorting
+
+- `,` + `a` / `n` / `e` / `s` / `m`: Sort alphabetically / naturally / by extension / by size / by modified time.
+- Use the capital letter to reverse it, so `,` + `A` is reverse alphabetical.
+
+Natural sort is the one that puts `file2` before `file10`; alphabetical does not.
+
+### Tabs and tasks
+
+- `t` + `t`: New tab in the current directory. `t` + `r` renames it.
+- `1` … `9`: Switch to that tab. `[` and `]` move to the previous / next one.
+- `w`: Show the task manager, for copies and other work still running.
+
+### Leaving
+
+- `q`: Quit.
+- `ctrl` + `c`: Close the current tab, or quit if it is the last one.
+- `ctrl` + `z`: Suspend yazi. `fg` brings it back.
+
 ## How it is installed
 
 The official prebuilt binary is used in both modes, so there is only one install path to maintain:
@@ -23,25 +96,17 @@ The git status signs are set to match `git status --short`, so they read the sam
 
 Currently installed:
 
-| Plugin | Keybinding | What it does |
-| --- | --- | --- |
-| [chmod](https://github.com/yazi-rs/plugins/tree/main/chmod.yazi) | `c` `m` | Change the mode of the selected files |
-| [git](https://github.com/yazi-rs/plugins/tree/main/git.yazi) | — | Shows git status signs next to each file |
-| [vcs-files](https://github.com/yazi-rs/plugins/tree/main/vcs-files.yazi) | `g` `c` | Lists the files changed in git |
+| Plugin | What it does |
+| --- | --- |
+| [chmod](https://github.com/yazi-rs/plugins/tree/main/chmod.yazi) | Change the mode of the selected files |
+| [git](https://github.com/yazi-rs/plugins/tree/main/git.yazi) | Shows git status signs next to each file |
+| [vcs-files](https://github.com/yazi-rs/plugins/tree/main/vcs-files.yazi) | Lists the files changed in git |
+
+Their keys are in [Key Bindings](#key-bindings), together with everything else.
 
 To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one machine, copy the resulting entry from `~/.config/yazi/package.toml` into `yazi_config/package.toml`, then add whatever its README asks for to `yazi_config/keymap.toml`, `yazi_config/yazi.toml` or `yazi_config/init.lua`. Pinning the revision this way keeps every machine on the same version; `ya pkg upgrade` is how you move it forward deliberately. Each plugin pins independently, so the revisions above do not all have to match.
 
 > Note: `g` `c` replaces yazi's default *Go to ~/.config*, because keybindings here are prepended. Check `yazi`'s own keymap before choosing a binding, or you will shadow something silently.
-
-## Extra key bindings
-
-Not everything here comes from a plugin. These are tips from the [yazi docs](https://yazi-rs.github.io/docs/tips/), kept in `yazi_config/keymap.toml` alongside the plugin bindings:
-
-| Keys | What it does |
-| --- | --- |
-| `g` `r` | [Cd to the root of the current git repository](https://yazi-rs.github.io/docs/tips/#cd-to-git-root) |
-
-> Note: `g` `r` runs `git rev-parse --show-toplevel` in a shell. Outside a git repository that command fails and the cd target is empty, so the key simply does nothing useful there.
 
 ## Installing a Nerd Font
 
