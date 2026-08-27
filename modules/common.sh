@@ -26,14 +26,20 @@ have() { command -v "$1" &> /dev/null; }
 
 # apt wrappers that do nothing when sudo is unavailable. Every module goes
 # through these, so the --no-sudo rule lives in exactly one place.
+#
+# DEBIAN_FRONTEND is set on the sudo command line rather than exported, because
+# sudo ships with "Defaults env_reset" and drops it from the environment
+# otherwise. Without it, a package that asks debconf a question -- tzdata is
+# the usual one -- stops and waits for an answer that never comes, which hangs
+# an unattended install such as a container build forever.
 apt_update() {
     [[ "$NO_SUDO" -eq 1 ]] && return 0
-    sudo apt update
+    sudo DEBIAN_FRONTEND=noninteractive apt update
 }
 
 apt_install() {
     [[ "$NO_SUDO" -eq 1 ]] && return 0
-    sudo apt install -y "$@"
+    sudo DEBIAN_FRONTEND=noninteractive apt install -y "$@"
 }
 
 # Clones only when the destination is missing, so a module can be re-run on a
