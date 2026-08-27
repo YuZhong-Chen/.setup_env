@@ -101,7 +101,7 @@ The `musl` builds are statically linked, so they run on any Linux without extra 
 
 `yazi` requires `file` to detect MIME types. It is installed automatically when `sudo` is available, and is normally already present on any real system. Without it `yazi` reports ``Cannot find 'file'`` and renders no previews at all.
 
-Optional preview dependencies (`ffmpeg`, `jq`, `poppler-utils`, `7zip`, `chafa`) are installed only when `sudo` is available. Without them `yazi` still works, but video, PDF, JSON and archive previews are unavailable. Note that Debian and Ubuntu name the 7-Zip binary `7z`, not `7zz` as the upstream `yazi` documentation assumes.
+Optional preview dependencies (`ffmpeg`, `jq`, `poppler-utils`, `7zip`, `chafa`) are installed only when `sudo` is available. Without them `yazi` still works, but video, PDF, JSON and archive previews are unavailable. Note that Debian and Ubuntu name the 7-Zip binary `7z`, not `7zz` as the upstream `yazi` documentation assumes. The older `7zip` package on Ubuntu 22.04 is the exception and installs it as `7zz`.
 
 ## Plugins
 
