@@ -2,6 +2,21 @@
 
 [yazi](https://yazi-rs.github.io) is a terminal file manager. It is installed by default; pass `--no-yazi` to skip it.
 
+## Starting it
+
+Use `y` rather than `yazi`:
+
+```bash
+y
+```
+
+`y` is a small wrapper the installer adds to your `~/.bashrc` or `~/.zshrc`, taken from the [yazi quick start](https://yazi-rs.github.io/docs/quick-start#shell-wrapper). It exists because a child process cannot change its parent's directory: plain `yazi` always drops you back where you started, however far you navigated.
+
+- Quit with `q` and the shell follows you to wherever you ended up.
+- Quit with `Q` and the shell stays where it was.
+
+The wrapper is only added when `yazi` is installed, and it is guarded with `command -v yazi`, so it stays out of the way on a machine where yazi is missing. It goes into the rc file for the shell you installed for, so if you run the module on its own, pass `--shell zsh` when that is your shell. The module warns you if the two disagree.
+
 ## Key Bindings
 
 The ones worth knowing, listed by what you are trying to do. Plugin and default keys are mixed together, since in practice you do not care which is which.

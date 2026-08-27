@@ -129,6 +129,7 @@ install_yazi() {
     fi
 
     install_yazi_plugins
+    install_yazi_wrapper
 }
 
 # Installs the plugins declared in yazi_config/package.toml.
@@ -156,6 +157,57 @@ install_yazi_plugins() {
     else
         warn "Plugin installation failed. yazi itself still works."
     fi
+}
+
+# Adds the y() shell wrapper, so that quitting yazi with "q" leaves the shell
+# in whatever directory you ended up in. Quitting with "Q" stays put.
+# From https://yazi-rs.github.io/docs/quick-start#shell-wrapper
+install_yazi_wrapper() {
+    local MODULE="yazi"
+
+    # Which rc file depends on the shell this run is installing for, not on
+    # whatever shell happens to be running this script.
+    local rcfile
+    if [[ "$CURRENT_SHELL" == "zsh" ]]; then
+        rcfile=~/.zshrc
+    else
+        rcfile=~/.bashrc
+    fi
+
+    # Say something if that disagrees with the user's actual login shell,
+    # since the wrapper would otherwise land in a file they never source.
+    local login_shell
+    login_shell="$(basename "$(getent passwd "$(id -un)" | cut -d: -f7)")"
+    if [[ -n "$login_shell" && "$login_shell" != "$CURRENT_SHELL" ]]; then
+        warn "Installing for ${CURRENT_SHELL}, but the login shell is ${login_shell}."
+        warn "The y() wrapper is going into $(basename "$rcfile"); re-run with"
+        warn "--shell ${login_shell} if that is not what you want."
+    fi
+
+    if grep -qF 'setup_env: yazi shell wrapper' "$rcfile" &> /dev/null; then
+        log "The y() wrapper is already in $(basename "$rcfile")."
+        return 0
+    fi
+
+    # The guard keeps y() undefined on a machine where yazi is not installed,
+    # so the function never shadows anything with a broken command.
+    cat >> "$rcfile" <<'WRAPPER'
+
+# Added by .setup_env: yazi shell wrapper.
+# Use "y" instead of "yazi": quitting with "q" cds the shell to where you
+# ended up, quitting with "Q" leaves the shell where it was.
+# https://yazi-rs.github.io/docs/quick-start#shell-wrapper
+if command -v yazi > /dev/null 2>&1; then
+	function y() {
+		local tmp cwd; tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+		command yazi "$@" --cwd-file="$tmp"
+		IFS= read -r -d '' cwd < "$tmp"
+		[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+		command rm -f -- "$tmp"
+	}
+fi
+WRAPPER
+    log "Added the y() wrapper to $(basename "$rcfile")."
 }
 
 # Run this module on its own:  ./modules/yazi.sh [--shell zsh] [--no-sudo]
