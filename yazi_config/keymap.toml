@@ -1,7 +1,8 @@
-# Plugin keybindings.
-# Upstream docs: https://github.com/yazi-rs/plugins
+# Extra keybindings, for plugins and for tips from the yazi docs.
 #
 # These are prepended, so they take precedence over yazi's own defaults.
+# Check yazi's default keymap before adding one, or you will shadow
+# something without any warning.
 
 # chmod: change the mode of the selected files.
 # "c m" is not bound by default, so nothing is shadowed.
@@ -17,3 +18,11 @@ desc = "Chmod on selected files"
 on   = [ "g", "c" ]
 run  = "plugin vcs-files"
 desc = "Show Git file changes"
+
+# Jump to the root of the current git repository.
+# From https://yazi-rs.github.io/docs/tips/#cd-to-git-root
+# "g r" is not bound by default, so nothing is shadowed.
+[[mgr.prepend_keymap]]
+on   = [ "g", "r" ]
+run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
+desc = "Cd to the git repository root"

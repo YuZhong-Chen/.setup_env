@@ -33,6 +33,16 @@ To add another plugin, add it with `ya pkg add <owner>/<repo>:<plugin>` on one m
 
 > Note: `g` `c` replaces yazi's default *Go to ~/.config*, because keybindings here are prepended. Check `yazi`'s own keymap before choosing a binding, or you will shadow something silently.
 
+## Extra key bindings
+
+Not everything here comes from a plugin. These are tips from the [yazi docs](https://yazi-rs.github.io/docs/tips/), kept in `yazi_config/keymap.toml` alongside the plugin bindings:
+
+| Keys | What it does |
+| --- | --- |
+| `g` `r` | [Cd to the root of the current git repository](https://yazi-rs.github.io/docs/tips/#cd-to-git-root) |
+
+> Note: `g` `r` runs `git rev-parse --show-toplevel` in a shell. Outside a git repository that command fails and the cd target is empty, so the key simply does nothing useful there.
+
 ## Installing a Nerd Font
 
 `yazi` labels files with [Nerd Font](https://www.nerdfonts.com) icons, and the prompt uses a few too. The terminal on the machine you are sitting at is what renders them, so the font has to be installed there.
