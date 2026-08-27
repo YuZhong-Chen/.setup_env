@@ -2,7 +2,7 @@
 
 ## ◻️ Introduction ◻️
 
-This repository helps you quickly set up a clean and user-friendly terminal environment. You can install either the `bash` or `zsh` configuration, along with custom styling for `tmux` and `vim`.
+This repository helps you quickly set up a clean and user-friendly terminal environment. You can install either the `bash` or `zsh` configuration, along with custom styling for `tmux` and `vim`, and the [yazi](https://yazi-rs.github.io) terminal file manager.
 
 For the `bash` setup, you can refer to the following example:
 
@@ -28,6 +28,9 @@ Append the parameters you want to use at the end of the command:
 - `--no-sudo`:
     - If set, the script will not use `sudo` for package installations. Make sure you have already installed the required packages manually.
     - It is useful if you are running the script in some environments where `sudo` is not available, such as laboratory servers.
+- `--no-yazi`:
+    - If set, the script will skip installing `yazi`.
+    - `yazi` is installed by default. Use this flag to keep the image or machine smaller.
 - `--help` | `-h`:
     - Display help information for the script.
 
@@ -48,40 +51,45 @@ RUN git clone https://github.com/YuZhong-Chen/.setup_env.git ~/.setup_env \
     && ~/.setup_env/install.sh
 ```
 
-## 📘 Configuration of `tmux` 📘
+## 🧩 Structure 🧩
 
-### Key Bindings
+Each package is installed by its own module under `modules/`, and `install.sh` just calls them in order. Shared helpers, argument parsing and the `--no-sudo` handling live in `modules/common.sh`, so they exist in exactly one place.
 
-To make tmux more convenient to use, I’ve customized several key bindings.  
-The most commonly used ones are listed below.
+```
+.setup_env/
+├── install.sh          # entry point, calls the modules in order
+├── modules/
+│   ├── common.sh       # shared helpers, argument parsing
+│   ├── zsh.sh          # install_zsh
+│   ├── bash.sh         # install_bash
+│   ├── tmux.sh         # install_tmux
+│   ├── vim.sh          # install_vim
+│   └── yazi.sh         # install_yazi
+├── zsh_config/
+├── bash_config/
+├── tmux_config/
+├── vim_config/
+├── yazi_config/        # plugins, keymap, theme, init.lua
+└── docs/               # the details, see below
+```
 
-> If the key binding you’re looking for isn’t listed here, it means I didn’t modify that particular key.
+### Running a single module
 
-- `prefix`: ctrl + A
-- `prefix` + `arrow keys`: Move between panes. (You can also click with the mouse to switch)
-- hold `prefix` + `arrow keys`: Resize the current pane.
-- `prefix` + `Space`: Automatically adjust pane sizes.
-- `prefix` + `-`: Split the pane horizontally. (Since `-` resembles a horizontal line)
-- `prefix` + `|`: Split the pane vertically. (Since `|` resembles a vertical line)
-- `prefix` + `c`: Create a new window. (c for create)
-- `ctrl` + `d`: Exit the current pane.
-- `prefix` + `number`: Switch to a specific window. (You can also click with the mouse to switch)
-- `prefix` + `a`: Switch to the previous window.
-- `prefix` + `d`: Detach the session.
-- `prefix` + `w`: List all sessions and navigate with arrow keys.
-- `mouse selection`: Select and copy text.
+Every module also runs on its own, with the same flags. This is the easy way to add or reinstall one package on a machine that was set up with an older version of this repository, without re-running the whole script:
 
-### Commands
+```bash
+cd ~/.setup_env && git pull
+./modules/yazi.sh --shell zsh
+```
 
-- `tmux`: Start a new tmux session.
-- `tmux ls`: List all tmux sessions.
-- `tmux attach`: Attach to the last tmux session.
-- `tmux attach -t <session_number>`: Attach to a specific tmux session.
-- `tmux kill-session -t <session_number>`: Kill a specific tmux session.
-- `tmux kill-server`: Kill all tmux sessions.
+Modules are safe to re-run: existing clones are skipped rather than failing, and `~/.bashrc` is only appended to once.
 
-## 🔍 Troubleshooting 🔍
+## 📚 Documentation 📚
 
-### Terminal character display issue
+The details live in `docs/`, so this page stays about installing:
 
-Please make sure your terminal supports and correctly displays UTF-8 characters. If the output does not match the example, it is likely due to missing font support for certain symbols. You can resolve this by installing a font that includes these characters or by replacing unsupported symbols with alternatives.
+| Document | What is in it |
+| --- | --- |
+| [tmux](docs/tmux.md) | Key bindings and the commands worth knowing |
+| [yazi](docs/yazi.md) | How it is installed, the plugins, the git status signs, and setting up a Nerd Font |
+| [Troubleshooting](docs/troubleshooting.md) | Symptoms and their fixes, listed by what you see on screen |

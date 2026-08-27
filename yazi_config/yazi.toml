@@ -1,0 +1,13 @@
+# Run the git plugin against every file and directory, so the status signs
+# appear in the linemode.
+# Upstream docs: https://github.com/yazi-rs/plugins/tree/main/git.yazi
+
+[[plugin.prepend_fetchers]]
+url   = "*"
+run   = "git"
+group = "git"
+
+[[plugin.prepend_fetchers]]
+url   = "*/"
+run   = "git"
+group = "git"
