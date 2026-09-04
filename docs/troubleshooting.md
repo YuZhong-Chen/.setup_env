@@ -42,7 +42,7 @@ Expected in a terminal without a graphics protocol, unless `chafa` is installed.
 
 The terminal supports a graphics protocol, so `yazi` sends the image as an escape sequence, but something between `yazi` and the terminal is failing to consume it, and the raw payload is printed as text instead.
 
-Almost always a multiplexer layer. `tmux` needs `allow-passthrough on`, which the `.tmux.conf` here already sets. Nested multiplexers are the common cause: `yazi` wraps its escape sequences for **one** level of `tmux`, so a `tmux` on the host plus another inside a container is one wrap too few. Run `yazi` under a single `tmux`, or none.
+Almost always a multiplexer layer. `tmux` 3.3 and later need `allow-passthrough on`, which the `.tmux.conf` here already sets; older `tmux` always allows passthrough and needs nothing. Nested multiplexers are the common cause: `yazi` wraps its escape sequences for **one** level of `tmux`, so a `tmux` on the host plus another inside a container is one wrap too few. Run `yazi` under a single `tmux`, or none.
 
 To see what `yazi` decided to do, run:
 
@@ -51,6 +51,14 @@ ya env
 ```
 
 `Emulator.probe` shows what it detected, and `Adapter` shows which renderer it chose.
+
+## `tmux` reports "unknown option: allow-passthrough" on startup
+
+`allow-passthrough` was added in `tmux` 3.3, and `tmux` shows every unknown option in its config-error pane when the session starts. Ubuntu 22.04 ships 3.2a, which is old enough to trip on it. Check with `tmux -V`.
+
+The `.tmux.conf` here wraps the line in `%if "#{>=:#{version},3.3}"`, and `tmux` does not parse a branch it skips, so an up-to-date copy is silent on every version. Seeing the error means the `~/.tmux.conf` on that machine predates the guard: re-run the installer, or copy `tmux_config/.tmux.conf` over it again.
+
+Nothing is lost on the older `tmux`. Passthrough is unconditional there, so `yazi` image preview works without the option; 3.3 added it only to make passthrough opt-in.
 
 ## The prompt symbols look wrong
 
